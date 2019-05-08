@@ -4,12 +4,17 @@ const userService = require('../service/user');
 module.exports = {
     async login(ctx, next) {
         const { username, password } = ctx.request.body;
+        
+        const isValidParam = [username, password].every(item => item != null && item !== '');
+        console.log(username, password);
+        if (!isValidParam) return ctx.body = { status: 'error', message: '用户名密码不能为空' };
+
         const rs = await userService.login(username, password);
         
         if (rs != null) return ctx.body = { userId: rs, message: '登陆成功' }
 
         ctx.status = 500;
-        ctx.body = { status: 'error', message: '用户名密码不匹配' };
+        ctx.body = { status: 'error', message: '啊啊啊，用户名密码不匹配' };
     },
     async register(ctx, next) {
         // const { username, password, phone, department, gender } = ctx.request.body;
