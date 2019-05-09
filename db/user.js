@@ -35,6 +35,23 @@ module.exports = {
         const [row, fileds] = await conn.execute('select * from user user where username=?', [username]);
         return row[0];
     },
-    async reviseUserDetail(){},
+    async reviseUserDetail( userId, params){
+        const conn = await this.getConn();
+
+        // 只更新不为空的参数
+        const sqlPartial = [];
+        const sqlParams = [];
+        for (let key in params) {
+            const value = params[key];
+            if (value == null) continue;
+            sqlPartial.push(`${key}=?`);
+            sqlParams.push(value);
+        }
+        const sqlPartialStr = sqlPartial.join(',');
+
+
+        const [row, fileds] = await conn.execute(`update user set ${sqlPartialStr} where id=?`, [...sqlParams, userId]);
+        return row;
+    },
     async revisePwd() {},
 }

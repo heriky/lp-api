@@ -16,7 +16,14 @@ module.exports = {
         const rs = await userDb.register(obj);
         if (rs.affectedRows === 1) return rs.insertId;
     },
-    async getUserById() {},
-    async reviseUserDetail(){},
+    async getUserById(userId) {
+        const user = await userDb.getUserById(userId);
+        return user;
+    },
+    async reviseUserDetail(userId, params){
+        const rs = await userDb.reviseUserDetail(userId, params);
+        if (rs.affectedRows !== null) return true;
+        return false;
+    },
     async revisePwd() {},
 }

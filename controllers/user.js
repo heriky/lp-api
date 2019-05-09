@@ -1,5 +1,5 @@
 const userService = require('../service/user');
-
+const saveUploadFiles = require('../utils/uploader').saveUploadFiles;
 
 module.exports = {
     async login(ctx, next) {
@@ -36,7 +36,49 @@ module.exports = {
         }
         ctx.body = { status: 'success', userId: rs, message: '注册成功' };
     },
-    async getUserById(ctx, next) {},
-    async reviseUserDetail(ctx, next){},
+    async getUserById(ctx, next) {
+        const userId = ctx.params.userId;
+        if (userId == null) {
+            ctx.status = 500;
+            return ctx.body = { status: 'error', message: '缺少userId' };
+        }
+        const userDetail = await userService.getUserById(userId);
+
+        if (!userDetail) {
+            ctx.status = 500;
+            return ctx.body = { status: 'error', message: '未找到用户信息' };
+        }
+
+        ctx.body = {
+            status: 'success',
+            data: userDetail
+        }
+    },
+    async reviseUserDetail(ctx, next){
+        const userId = ctx.params.userId;
+
+        // 可修改的信息包括： username, avatar, gender, phone, department, password
+        const { username, avatar, gender, phone, department, password } = ctx.request.body;
+        const params = { username, avatar, gender, phone, department, password };
+        const isValidParam = [username, avatar, gender, phone, department, password].some(it => it != null);
+        if (!isValidParam) {
+            ctx.status = 500;
+            ctx.body = {
+                status: 'error',
+                message: '修改功能需要传递以下至少一个参数:  [username, avatar, gender, phone, department, password]'
+            }
+            return;
+        }
+
+        const avatarRs = saveUploadFiles(ctx);
+        params = {...params, ...avatarRs};
+
+        const rs = await userService.reviseUserDetail(userId, params);
+        if (rs) {
+            return ctx.body = { status: 'success', message: '修改成功' }
+        }
+        ctx.status = 500;
+        ctx.body = { status: 'error', message: '修改发生错误！！！！！！！！！！' }
+    },
     async revisePwd(ctx, next) {},
 }

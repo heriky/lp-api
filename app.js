@@ -5,10 +5,10 @@ const json = require('koa-json')
 const onerror = require('koa-onerror')
 const bodyparser = require('koa-bodyparser')
 const logger = require('koa-logger')
+const koaBody = require('koa-body');
 
 const goods = require('./routes/goods')
 const user = require('./routes/user')
-
 
 // error handler
 onerror(app)
@@ -18,9 +18,15 @@ const dbInit = require('./db/init');
 dbInit.init();
 
 // middlewares
-app.use(bodyparser({
-  enableTypes:['json', 'form', 'text']
-}))
+// app.use(bodyparser({
+//   enableTypes:['json', 'form', 'text']
+// }))
+
+app.use(koaBody({
+  multipart: true
+}));
+
+
 app.use(json())
 app.use(logger())
 app.use(require('koa-static')(__dirname + '/public'))
@@ -38,7 +44,7 @@ app.use(async (ctx, next) => {
 })
 
 // routes
-// app.use(goods.routes(), index.allowedMethods())
+app.use(goods.routes(), goods.allowedMethods())
 app.use(user.routes(), user.allowedMethods())
 
 // error-handling

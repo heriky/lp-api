@@ -24,6 +24,6 @@ router.put('/:userId', userController.reviseUserDetail);
 
 router.get('/:userId', userController.getUserById);
 
-router.put('/:userId/pwd', userController.revisePwd);
+ // router.put('/:userId/pwd', userController.revisePwd); // 修改密码的功能，可以调用修改用户信息的接口实现
 
 module.exports = router;
