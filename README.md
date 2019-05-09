@@ -9,22 +9,6 @@
 
 
 
-
-router.prefix('/lp/v1/user')
-
-router.get('/', async (ctx, next) => {
-    ctx.body = 'hello world!!!'
-});
-
-router.post('/login', userController.login);
-
-router.post('/register', userController.register);
-
-router.put('/:userId', userController.reviseUserDetail);
-
-router.get('/:userId', userController.getUserById);
-
-
 ## 接口列表
 
 1. 注册
