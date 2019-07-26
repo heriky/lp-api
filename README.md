@@ -14,6 +14,7 @@
 1. 注册
 ```javascript
 
+
 // 示例
 post('/lp/v1/user/register', {
   username: 'aaa',
